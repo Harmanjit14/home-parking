@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "306274038981",
+    "project_id": "parking-shybois",
+    "storage_bucket": "parking-shybois.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306274038981:android:c1847ce5743ba1bfb3acac",
+        "android_client_info": {
+          "package_name": "com.example.home_parking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "306274038981-0jep47aslt7e8vsqnrms9tall4s7dlkt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAokM2F089MjOiBbcZKdR4jBVqNvPyC9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "306274038981-0jep47aslt7e8vsqnrms9tall4s7dlkt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
