@@ -1,4 +1,5 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,7 +35,7 @@ Widget authChanges() {
     stream: FirebaseAuth.instance.authStateChanges(),
     builder: (BuildContext context, snapshot) {
       if (snapshot.hasData) {
-        return const MapScreen();
+        return const AuthChecker();
       } else {
         return const IntoScreen();
       }
@@ -62,7 +63,7 @@ class _AuthCheckerState extends State<AuthChecker> with AfterLayoutMixin {
           mainAxisSize: MainAxisSize.min,
           children: const [
             CircularProgressIndicator(
-              color: Colors.amber,
+              color: Colors.white,
             ),
             SizedBox(height: 15),
             Text("Loading Please Wait...")
@@ -74,9 +75,19 @@ class _AuthCheckerState extends State<AuthChecker> with AfterLayoutMixin {
 
   @override
   void afterFirstLayout(BuildContext context) {
-    if (_auth.currentUser == null)
-      Get.offAll(() => const IntoScreen());
-    else
+    FirebaseFirestore.instance
+        .collection("user")
+        .doc(FirebaseAuth.instance.currentUser!.uid.toString())
+        .get()
+        .then((value) {
+      user.name = value.get("name");
+      user.latitude = value.get("location")["latitude"];
+      user.longitude = value.get("location")["longitude"];
+      print(value);
       Get.offAll(() => MapScreen());
+    }).catchError((e) {
+      print(e);
+      Get.offAll(() => const IntoScreen());
+    });
   }
 }

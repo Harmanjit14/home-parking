@@ -24,12 +24,13 @@ class LoginScreen extends StatelessWidget {
             email: _email.text, password: _password.text)
         .then((value) {
       _obj.loading.value = false;
+      Get.offAll(() => const MapScreen());
     }).catchError((e) {
       Get.snackbar("Error", e.message,
           //  "Unable to login, Please try again later..",
           icon: const Icon(Icons.error));
       _obj.loading.value = false;
-      Get.offAll(() => MapScreen());
+      
     });
   }
 

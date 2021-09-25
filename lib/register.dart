@@ -12,10 +12,13 @@ class RegisterButton extends GetxController {
 }
 
 class User {
-  String id = "";
-  String name = "";
-  String email = "";
+  String? name;
+  String id = FirebaseAuth.instance.currentUser!.uid;
+  double latitude = 0;
+  double longitude = 0;
 }
+
+User user = User();
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({Key? key}) : super(key: key);
@@ -62,7 +65,13 @@ class RegisterScreen extends StatelessWidget {
             email: _email.text, password: _password.text)
         .then((value) async {
       _locationData = await getLocation();
-      FirebaseFirestore.instance.collection("user").add({
+      user.name = _name.text;
+      user.latitude = _locationData!.latitude!;
+      user.longitude = _locationData!.longitude!;
+      FirebaseFirestore.instance
+          .collection("user")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
         "name": _name.text,
         "id": FirebaseAuth.instance.currentUser!.uid,
         "wallet": 100,
