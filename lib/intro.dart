@@ -77,7 +77,9 @@ class IntoScreen extends StatelessWidget {
                             color: Colors.white,
                             padding: const EdgeInsets.all(10),
                             height: double.maxFinite,
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.to(() => RegisterScreen());
+                            },
                             child: Text(
                               "Register",
                               style: TextStyle(

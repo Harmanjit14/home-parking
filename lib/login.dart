@@ -16,6 +16,7 @@ class LoginScreen extends StatelessWidget {
   final LoginButton _obj = Get.put(LoginButton());
 
   void login() {
+    if (_obj.loading.value) return;
     _obj.loading.value = true;
 
     FirebaseAuth.instance
@@ -28,6 +29,7 @@ class LoginScreen extends StatelessWidget {
           //  "Unable to login, Please try again later..",
           icon: const Icon(Icons.error));
       _obj.loading.value = false;
+      Get.offAll(() => MapScreen());
     });
   }
 
