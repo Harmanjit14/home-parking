@@ -1,4 +1,5 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 class MapScreen extends StatefulWidget {
@@ -38,7 +39,9 @@ class _MapScreenState extends State<MapScreen> {
         centerTitle: true,
         title: const Text('Maps Sample App'),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {}),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        FirebaseAuth.instance.signOut();
+      }),
       body: GoogleMap(
         mapType: MapType.hybrid,
         markers: s,

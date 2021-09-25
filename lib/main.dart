@@ -18,15 +18,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Maps',
+      title: 'My Parking',
       theme: ThemeData(
         brightness: Brightness.dark,
         splashColor: Colors.grey,
         primarySwatch: Colors.grey,
       ),
-      home: const AuthChecker(),
+      home: authChanges(),
     );
   }
+}
+
+Widget authChanges() {
+  return StreamBuilder(
+    stream: FirebaseAuth.instance.authStateChanges(),
+    builder: (BuildContext context, snapshot) {
+      if (snapshot.hasData) {
+        return const MapScreen();
+      } else {
+        return const IntoScreen();
+      }
+    },
+  );
 }
 
 class AuthChecker extends StatefulWidget {
@@ -37,23 +50,33 @@ class AuthChecker extends StatefulWidget {
 }
 
 class _AuthCheckerState extends State<AuthChecker> with AfterLayoutMixin {
-  FirebaseAuth _auth;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: const [
-          CircularProgressIndicator(),
-          SizedBox(height: 15),
-          Text("Loading Please Wait...")
-        ],
+          child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            CircularProgressIndicator(
+              color: Colors.amber,
+            ),
+            SizedBox(height: 15),
+            Text("Loading Please Wait...")
+          ],
+        ),
       )),
     );
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {}
+  void afterFirstLayout(BuildContext context) {
+    if (_auth.currentUser == null)
+      Get.offAll(() => const IntoScreen());
+    else
+      Get.offAll(() => MapScreen());
+  }
 }

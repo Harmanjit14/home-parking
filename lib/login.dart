@@ -1,17 +1,35 @@
 import 'dart:async';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'exports.dart';
+
+class LoginButton extends GetxController {
+  RxBool loading = false.obs;
+}
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final _key = GlobalKey<FormState>();
+  final LoginButton _obj = Get.put(LoginButton());
 
-  void login() {}
+  void login() {
+    _obj.loading.value = true;
+
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: _email.text, password: _password.text)
+        .then((value) {
+      _obj.loading.value = false;
+    }).catchError((e) {
+      Get.snackbar("Error", e.message,
+          //  "Unable to login, Please try again later..",
+          icon: const Icon(Icons.error));
+      _obj.loading.value = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,23 +54,29 @@ class LoginScreen extends StatelessWidget {
               topLeft: Radius.circular(20),
               bottomLeft: Radius.circular(20),
             ),
-            child: MaterialButton(
-              color: Colors.white,
-              padding: const EdgeInsets.all(10),
-              height: double.maxFinite,
-              onPressed: () async {
-                (_key.currentState!.validate())
-                    ? login()
-                    : Timer(const Duration(seconds: 2), () {
-                        _key.currentState!.reset();
-                      });
-              },
-              child: Text(
-                "Login",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.height * 0.021,
-                ),
+            child: Obx(
+              () => MaterialButton(
+                color: Colors.white,
+                padding: const EdgeInsets.all(10),
+                height: double.maxFinite,
+                onPressed: () async {
+                  (_key.currentState!.validate())
+                      ? login()
+                      : Timer(const Duration(seconds: 2), () {
+                          _key.currentState!.reset();
+                        });
+                },
+                child: (_obj.loading.value)
+                    ? const CircularProgressIndicator(
+                        color: Colors.black,
+                      )
+                    : Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: size.height * 0.021,
+                        ),
+                      ),
               ),
             ),
           ),
