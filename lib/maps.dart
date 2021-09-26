@@ -33,113 +33,118 @@ class _MapScreenState extends State<MapScreen> {
   GeoFirePoint? center;
 
   Widget container(DocumentSnapshot obj, int distance) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                  width: 65,
-                  child: Image.asset("assets/${obj.get("type")}.png")),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                obj.get("type").toString(),
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 20),
-              )
-            ],
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.timelapse,
-                    color: Colors.black,
-                  ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  Text(
-                    obj.get("time").toString(),
-                    style: const TextStyle(color: Colors.black),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.car_rental,
-                    color: Colors.black,
-                  ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  Text(
-                    "Space for ${obj.get("space")}",
-                    style: const TextStyle(color: Colors.black),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.alt_route,
-                    color: Colors.black,
-                  ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  Text(
-                    "$distance km",
-                    style: TextStyle(color: Colors.black),
-                  )
-                ],
-              ),
-            ],
-          )
-        ],
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => ParkingScreen(obj: obj));
+      },
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                    width: 65,
+                    child: Image.asset("assets/${obj.get("type")}.png")),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  obj.get("type").toString(),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20),
+                )
+              ],
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.timelapse,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(
+                      width: 7,
+                    ),
+                    Text(
+                      obj.get("time").toString(),
+                      style: const TextStyle(color: Colors.black),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.car_rental,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(
+                      width: 7,
+                    ),
+                    Text(
+                      "Space for ${obj.get("space")}",
+                      style: const TextStyle(color: Colors.black),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.alt_route,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(
+                      width: 7,
+                    ),
+                    Text(
+                      "$distance km",
+                      style: TextStyle(color: Colors.black),
+                    )
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(20),
+        height: double.maxFinite,
+        width: 230,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: const [BoxShadow(color: Colors.black, blurRadius: 7)],
+            borderRadius: BorderRadius.circular(25)),
       ),
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(20),
-      height: double.maxFinite,
-      width: 230,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: const [BoxShadow(color: Colors.black, blurRadius: 7)],
-          borderRadius: BorderRadius.circular(25)),
     );
   }
 
   @override
   void initState() {
-    marker = Marker(
-      markerId: MarkerId("Home"),
-      position: _center,
-      icon: BitmapDescriptor.defaultMarker,
-    );
-    _obj._set.value.add(marker!);
     center =
         geo.point(latitude: _center.latitude, longitude: _center.longitude);
+    marker = Marker(
+      markerId: MarkerId("home"),
+      position: _center,
+    );
+    _obj._set.value.add(marker!);
+
     super.initState();
   }
 
@@ -157,6 +162,8 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             Obx(
               () => GoogleMap(
+                myLocationButtonEnabled: true,
+                myLocationEnabled: true,
                 mapType: MapType.normal,
                 markers: _obj._set.value,
                 onMapCreated: _onMapCreated,
@@ -191,11 +198,6 @@ class _MapScreenState extends State<MapScreen> {
                     ],
                   ),
                   StreamBuilder<QuerySnapshot>(
-                      // stream: geo
-                      // .collection(
-                      //     collectionRef: FirebaseFirestore.instance
-                      //         .collection("parking"))
-                      // .within(center: center!, radius: 350, field: "geo"),
                       stream: FirebaseFirestore.instance
                           .collection("parking")
                           .snapshots(),
@@ -220,8 +222,12 @@ class _MapScreenState extends State<MapScreen> {
                                     snapshot.data!.docs[index].get("type")),
                                 position: LatLng(d.latitude, d.longitude),
                                 icon: BitmapDescriptor.defaultMarkerWithHue(
-                                    BitmapDescriptor.hueBlue),
+                                    (snapshot.data!.docs[index].get("area") ==
+                                            'R')
+                                        ? BitmapDescriptor.hueBlue
+                                        : BitmapDescriptor.hueRed),
                               );
+
                               _obj._set.value.add(temp);
 
                               double distance = Geolocator.distanceBetween(
