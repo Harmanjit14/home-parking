@@ -74,8 +74,8 @@ class _AuthCheckerState extends State<AuthChecker> with AfterLayoutMixin {
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {
-    FirebaseFirestore.instance
+  void afterFirstLayout(BuildContext context) async {
+    await FirebaseFirestore.instance
         .collection("user")
         .doc(FirebaseAuth.instance.currentUser!.uid.toString())
         .get()
