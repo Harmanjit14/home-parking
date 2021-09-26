@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'exports.dart';
 
 class ParkingScreen extends StatefulWidget {
-  const ParkingScreen({Key? key, required this.obj}) : super(key: key);
+  const ParkingScreen({Key? key, required this.obj, @required this.distance})
+      : super(key: key);
   final DocumentSnapshot obj;
+  final distance;
 
   @override
   State<ParkingScreen> createState() => _ParkingScreenState();
@@ -108,8 +111,8 @@ class _ParkingScreenState extends State<ParkingScreen> {
     end = Marker(markerId: MarkerId("end"), position: e);
     _set.add(start!);
     _set.add(end!);
-    _createPolylines(
-        _center.latitude, _center.longitude, e.latitude, e.longitude);
+    // _createPolylines(
+    //     _center.latitude, _center.longitude, e.latitude, e.longitude);
 
     super.initState();
   }
@@ -132,12 +135,12 @@ class _ParkingScreenState extends State<ParkingScreen> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: GoogleMap(
-                    polylines: Set<Polyline>.of(polylines.values),
+                    // polylines: Set<Polyline>.of(polylines.values),
                     markers: _set,
                     onMapCreated: _onMapCreated,
                     myLocationEnabled: true,
-                    myLocationButtonEnabled: false,
-                    initialCameraPosition: CameraPosition(target: _center)),
+                    initialCameraPosition:
+                        CameraPosition(target: _center, zoom: 7)),
               ),
               height: size.height * 0.3,
               decoration: BoxDecoration(
@@ -148,7 +151,161 @@ class _ParkingScreenState extends State<ParkingScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-          )
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      height: 100,
+                      width: 100,
+                      child: Image.asset((widget.obj.get("type") == "car")
+                          ? "assets/car.png"
+                          : "assets/bike.png"),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Parking for : ${widget.obj.get("type").toString().toUpperCase()}",
+                      style: const TextStyle(
+                        fontSize: 25,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    Icon(Icons.location_on),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Address : ${widget.obj.get("loc").toString().toUpperCase()}",
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    Icon(Icons.directions_car_rounded),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Distance : ${widget.distance} km",
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    Icon(Icons.space_bar),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Space left : ${widget.obj.get("space").toString().toUpperCase()} Vehicle",
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    Icon(Icons.timelapse),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Time : ${widget.obj.get("time").toString().toUpperCase()} (24-hour)",
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: const [
+                    Icon(Icons.monetization_on),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Charges : 5\$",
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: size.height * 0.13,
+            width: double.maxFinite,
+            padding: const EdgeInsets.all(20),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.black,
+                  boxShadow: const [
+                    BoxShadow(color: Colors.grey, blurRadius: 10),
+                  ],
+                  borderRadius: BorderRadius.circular(20)),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                ),
+                child: MaterialButton(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(10),
+                  height: double.maxFinite,
+                  onPressed: () async {
+                    Get.to(() => RentScreen());
+                  },
+                  child: Text(
+                    "Rent It",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: size.height * 0.021,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       )),
     );

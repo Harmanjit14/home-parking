@@ -35,7 +35,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget container(DocumentSnapshot obj, int distance) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => ParkingScreen(obj: obj));
+        Get.to(() => ParkingScreen(obj: obj,distance: distance,));
       },
       child: Container(
         child: Row(
@@ -235,7 +235,7 @@ class _MapScreenState extends State<MapScreen> {
                                       d.longitude,
                                       center!.latitude,
                                       center!.longitude) /
-                                  10000;
+                                  1000;
                               return container(
                                   snapshot.data!.docs[index], distance.floor());
                             },
